@@ -1,0 +1,57 @@
+site_name: BidTools Documentation
+site_description: Full documentation for the BidTools Smart Construction Equipment Rental & Bidding Platform.
+site_url: https://<your-user-or-org>.github.io/bidtools-docs/
+
+theme:
+  name: material
+  language: en
+  palette:
+    scheme: default
+    primary: indigo
+    accent: blue
+  features:
+    - navigation.expand
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+
+nav:
+  - Home: index.md
+
+  - SRS:
+      - Full SRS: SRS/BidTools_SRS.md
+
+  - API:
+      - Backend Core API: API/backend-core/openapi.yaml
+      - Bidding Service API: API/bidding-service/openapi.yaml
+      - ML Service API: API/ml-service/openapi.yaml
+      - Mobile API: API/mobile-api/mobile-api.md
+      - Web API: API/web-api/web-api.md
+
+  - ML:
+      - Dataset: ML/dataset/dataset-overview.md
+      - Preprocessing: ML/training/preprocessing.md
+      - Training Process: ML/training/training-process.md
+      - Model Architecture: ML/model/model-architecture.md
+      - Explainability: ML/training/explainability.md
+      - ML API: ML/api/usage-examples.md
+
+  - Project:
+      - Roadmap: Project/roadmap.md
+      - Features: Project/features-list.md
+      - Milestones: Project/milestones.md
+      - Team Structure: Project/team-structure.md
+      - Guidelines: Project/development-guidelines.md
+      - Coding Standards: Project/coding-standards.md
+
+  - Developer Logs:
+      - Guidelines: Developer-Logs/Guidelines.md
+      - Template: Developer-Logs/Template.md
+
+  - Meetings:
+      - Weekly Meetings: Meetings/weekly-meetings/README.md
+      - Decisions: Meetings/decisions/decision-log.md
+
+
