@@ -1,0 +1,1725 @@
+openapi: 3.0.3
+info:
+  title: Smart Construction Equipment Rental & Bidding System API
+  version: "1.0.0"
+  description: RESTful API for Contractors, Suppliers, Admins — Rentals, Bids, Payments, Notifications, Disputes
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/MCHANUKA72/final/1.0.0
+  - url: https://api.example.com/v1
+tags:
+  - name: Auth
+  - name: Users
+  - name: Profiles
+  - name: Contractors
+  - name: Suppliers
+  - name: Items
+  - name: Availability
+  - name: Requests
+  - name: Bids
+  - name: Rentals
+  - name: Tracking
+  - name: Payments
+  - name: Escrow
+  - name: Notifications
+  - name: Disputes
+components:
+  schemas:
+
+    # User and profile schemas
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 1001
+        name:
+          type: string
+          example: "Alice Builder"
+        email:
+          type: string
+          format: email
+          example: "alice@example.com"
+        phone:
+          type: string
+          example: "+94123456789"
+        role:
+          type: string
+          enum: [contractor, supplier, admin]
+          example: "contractor"
+        status:
+          type: string
+          example: "active"
+        created_at:
+          type: string
+          format: date-time
+    NewUser:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        password: { type: string }
+        role:
+          type: string
+          enum: [contractor, supplier, admin]
+    AuthResponse:
+      type: object
+      properties:
+        access_token: { type: string }
+        refresh_token: { type: string }
+        user:
+          $ref: '#/components/schemas/User'
+
+    UserProfile:
+      type: object
+      properties:
+        profile_id: { type: integer }
+        user_id: { type: integer }
+        profile_type: { type: string }
+        company_name: { type: string }
+        business_license: { type: string }
+        address: { type: string }
+        rating: { type: number }
+        verification_status: { type: string }
+
+    ContractorProfile:
+      type: object
+      properties:
+        contractor_id: { type: integer }
+        user_id: { type: integer }
+        project_locations: { type: string }
+
+    SupplierProfile:
+      type: object
+      properties:
+        supplier_id: { type: integer }
+        user_id: { type: integer }
+        business_license: { type: string }
+        rating: { type: number }
+        inventory_count: { type: integer }
+
+    AdminProfile:
+      type: object
+      properties:
+        admin_id: { type: integer }
+        user_id: { type: integer }
+        permissions: { type: string }
+
+    # Items
+    Item:
+      type: object
+      properties:
+        item_id: { type: integer }
+        supplier_id: { type: integer }
+        category: { type: string }
+        brand: { type: string }
+        model: { type: string }
+        specs: { type: string }
+        hourly_rate: { type: number }
+        daily_rate: { type: number }
+        status: { type: string, example: "available" }
+        images: { type: string }
+
+    NewItem:
+      type: object
+      required: [supplier_id, category]
+      properties:
+        supplier_id: { type: integer }
+        category: { type: string }
+        brand: { type: string }
+        model: { type: string }
+        specs: { type: string }
+        hourly_rate: { type: number }
+        daily_rate: { type: number }
+        status: { type: string }
+        images: { type: string }
+
+    ItemAvailability:
+      type: object
+      properties:
+        availability_id: { type: integer }
+        item_id: { type: integer }
+        available_from: { type: string, format: date-time }
+        available_to: { type: string, format: date-time }
+        location_lat: { type: number }
+        location_lng: { type: number }
+
+    NewAvailability:
+      type: object
+      required: [item_id, available_from, available_to]
+      properties:
+        item_id: { type: integer }
+        available_from: { type: string, format: date-time }
+        available_to: { type: string, format: date-time }
+        location_lat: { type: number }
+        location_lng: { type: number }
+
+    # Requests & Bids
+    EquipmentRequest:
+      type: object
+      properties:
+        request_id: { type: integer }
+        contractor_id: { type: integer }
+        category: { type: string }
+        brand: { type: string }
+        model: { type: string }
+        quantity: { type: integer }
+        start_date: { type: string, format: date-time }
+        end_date: { type: string, format: date-time }
+        notes: { type: string }
+        images: { type: string }
+        status: { type: string, example: "open" }
+
+    NewRequest:
+      type: object
+      required: [contractor_id, category, start_date, end_date]
+      properties:
+        contractor_id: { type: integer }
+        category: { type: string }
+        brand: { type: string }
+        model: { type: string }
+        quantity: { type: integer, default: 1 }
+        start_date: { type: string, format: date-time }
+        end_date: { type: string, format: date-time }
+        notes: { type: string }
+        images: { type: string }
+
+    Bid:
+      type: object
+      properties:
+        bid_id: { type: integer }
+        request_id: { type: integer }
+        supplier_id: { type: integer }
+        proposed_price: { type: number }
+        available_quantity: { type: integer }
+        delivery_option: { type: string }
+        deposit_required: { type: number }
+        estimated_delivery_time: { type: string }
+        status: { type: string }
+
+    NewBid:
+      type: object
+      required: [request_id, supplier_id, proposed_price]
+      properties:
+        request_id: { type: integer }
+        supplier_id: { type: integer }
+        proposed_price: { type: number }
+        available_quantity: { type: integer }
+        delivery_option: { type: string }
+        deposit_required: { type: number }
+        estimated_delivery_time: { type: string }
+
+    # Rentals
+    Rental:
+      type: object
+      properties:
+        rental_id: { type: integer }
+        request_id: { type: integer }
+        bid_id: { type: integer }
+        contractor_id: { type: integer }
+        supplier_id: { type: integer }
+        item_ids: { type: string }
+        rental_agreement_pdf: { type: string }
+        start_date: { type: string, format: date-time }
+        end_date: { type: string, format: date-time }
+        return_date: { type: string, format: date-time }
+        total_amount: { type: number }
+        status: { type: string }
+
+    NewRental:
+      type: object
+      required: [request_id, bid_id, contractor_id, supplier_id, start_date, end_date]
+      properties:
+        request_id: { type: integer }
+        bid_id: { type: integer }
+        contractor_id: { type: integer }
+        supplier_id: { type: integer }
+        item_ids: { type: string }
+        start_date: { type: string, format: date-time }
+        end_date: { type: string, format: date-time }
+        total_amount: { type: number }
+
+    RentalTracking:
+      type: object
+      properties:
+        tracking_id: { type: integer }
+        rental_id: { type: integer }
+        actual_start_time: { type: string, format: date-time }
+        actual_end_time: { type: string, format: date-time }
+        late_fees: { type: number }
+        extension_requests: { type: string }
+
+    NewTracking:
+      type: object
+      required: [rental_id]
+      properties:
+        rental_id: { type: integer }
+        actual_start_time: { type: string, format: date-time }
+        actual_end_time: { type: string, format: date-time }
+        late_fees: { type: number }
+        extension_requests: { type: string }
+
+    # Payments & Escrow
+    Payment:
+      type: object
+      properties:
+        payment_id: { type: integer }
+        rental_id: { type: integer }
+        contractor_id: { type: integer }
+        supplier_id: { type: integer }
+        amount: { type: number }
+        payment_method: { type: string }
+        payment_status: { type: string }
+        timestamp: { type: string, format: date-time }
+        transaction_reference: { type: string }
+
+    NewPayment:
+      type: object
+      required: [rental_id, amount, payment_method]
+      properties:
+        rental_id: { type: integer }
+        amount: { type: number }
+        payment_method: { type: string }
+        transaction_reference: { type: string }
+
+    Escrow:
+      type: object
+      properties:
+        escrow_id: { type: integer }
+        rental_id: { type: integer }
+        deposit_amount: { type: number }
+        status: { type: string }
+
+    NewEscrow:
+      type: object
+      required: [rental_id, deposit_amount]
+      properties:
+        rental_id: { type: integer }
+        deposit_amount: { type: number }
+
+    Notification:
+      type: object
+      properties:
+        notification_id: { type: integer }
+        user_id: { type: integer }
+        type: { type: string }
+        content: { type: string }
+        is_read: { type: boolean }
+        created_at: { type: string, format: date-time }
+
+    NewNotification:
+      type: object
+      required: [user_id, type, content]
+      properties:
+        user_id: { type: integer }
+        type: { type: string }
+        content: { type: string }
+
+    Dispute:
+      type: object
+      properties:
+        dispute_id: { type: integer }
+        rental_id: { type: integer }
+        raised_by: { type: integer }
+        issue_description: { type: string }
+        status: { type: string }
+        resolution_notes: { type: string }
+        admin_id: { type: integer }
+
+    NewDispute:
+      type: object
+      required: [rental_id, raised_by, issue_description]
+      properties:
+        rental_id: { type: integer }
+        raised_by: { type: integer }
+        issue_description: { type: string }
+
+  parameters:
+    UserIdParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    RequestIdParam:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        type: integer
+    ItemIdParam:
+      name: itemId
+      in: path
+      required: true
+      schema:
+        type: integer
+    BidIdParam:
+      name: bidId
+      in: path
+      required: true
+      schema:
+        type: integer
+    RentalIdParam:
+      name: rentalId
+      in: path
+      required: true
+      schema:
+        type: integer
+    AvailabilityIdParam:
+      name: availabilityId
+      in: path
+      required: true
+      schema:
+        type: integer
+    PaymentIdParam:
+      name: paymentId
+      in: path
+      required: true
+      schema:
+        type: integer
+    EscrowIdParam:
+      name: escrowId
+      in: path
+      required: true
+      schema:
+        type: integer
+    NotificationIdParam:
+      name: notificationId
+      in: path
+      required: true
+      schema:
+        type: integer
+    DisputeIdParam:
+      name: disputeId
+      in: path
+      required: true
+      schema:
+        type: integer
+
+paths:
+
+  # -----------------------
+  # Auth
+  # -----------------------
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Unauthorized
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout user
+      responses:
+        '200':
+          description: Logged out
+
+  /auth/token/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: { type: string }
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: { type: string }
+
+  /auth/verify:
+    post:
+      tags: [Auth]
+      summary: Verify email/OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, otp]
+              properties:
+                email: { type: string }
+                otp: { type: string }
+      responses:
+        '200':
+          description: Verified
+
+  /auth/password/reset/request:
+    post:
+      tags: [Auth]
+      summary: Request password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string }
+      responses:
+        '200':
+          description: Reset requested
+
+  /auth/password/reset/confirm:
+    post:
+      tags: [Auth]
+      summary: Confirm new password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, otp, new_password]
+              properties:
+                email: { type: string }
+                otp: { type: string }
+                new_password: { type: string }
+      responses:
+        '200':
+          description: Password reset
+
+  # -----------------------
+  # Users
+  # -----------------------
+  /users:
+    get:
+      tags: [Users]
+      summary: List users (admin)
+      parameters:
+        - in: query
+          name: role
+          schema:
+            type: string
+          description: Filter by role
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Filter by status
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags: [Users]
+      summary: Create user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by id
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not found
+    put:
+      tags: [Users]
+      summary: Update user
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                phone: { type: string }
+                status: { type: string }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags: [Users]
+      summary: Delete or deactivate user
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '204':
+          description: Deleted
+
+  # -----------------------
+  # Profiles
+  # -----------------------
+  /profiles:
+    get:
+      tags: [Profiles]
+      summary: List profiles
+      parameters:
+        - in: query
+          name: profile_type
+          schema:
+            type: string
+      responses:
+        '200':
+          description: profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+    post:
+      tags: [Profiles]
+      summary: Create profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /profiles/{id}:
+    get:
+      tags: [Profiles]
+      summary: Get profile by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+    put:
+      tags: [Profiles]
+      summary: Update profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [Profiles]
+      summary: Delete profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Deleted
+
+  /contractors/{id}:
+    get:
+      tags: [Contractors]
+      summary: Get contractor profile (by user id)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Contractor profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractorProfile'
+
+  /suppliers/{id}:
+    get:
+      tags: [Suppliers]
+      summary: Get supplier profile (by user id)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Supplier profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplierProfile'
+
+  /admins/{id}:
+    get:
+      tags: [Profiles]
+      summary: Get admin profile (by user id)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Admin profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProfile'
+
+  # -----------------------
+  # Items
+  # -----------------------
+  /items:
+    get:
+      tags: [Items]
+      summary: List items (filterable)
+      parameters:
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: brand
+          schema: { type: string }
+        - in: query
+          name: model
+          schema: { type: string }
+        - in: query
+          name: supplier_id
+          schema: { type: integer }
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: limit
+          schema: { type: integer }
+        - in: query
+          name: offset
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Items list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+    post:
+      tags: [Items]
+      summary: Create an item (supplier)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewItem'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /items/{itemId}:
+    get:
+      tags: [Items]
+      summary: Get item by id
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        '200':
+          description: Item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    put:
+      tags: [Items]
+      summary: Update item
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewItem'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [Items]
+      summary: Delete/Archive item
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        '204':
+          description: Deleted
+
+  /suppliers/{supplierId}/items:
+    get:
+      tags: [Items]
+      summary: List items for a supplier
+      parameters:
+        - name: supplierId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Supplier items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+
+  # -----------------------
+  # Item Availability
+  # -----------------------
+  /items/{itemId}/availability:
+    get:
+      tags: [Availability]
+      summary: Get availability for item
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        '200':
+          description: Availability list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemAvailability'
+    post:
+      tags: [Availability]
+      summary: Add availability window for item
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAvailability'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemAvailability'
+
+  /availability/{availabilityId}:
+    get:
+      tags: [Availability]
+      summary: Get availability by id
+      parameters:
+        - $ref: '#/components/parameters/AvailabilityIdParam'
+      responses:
+        '200':
+          description: Availability
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemAvailability'
+    put:
+      tags: [Availability]
+      summary: Update availability
+      parameters:
+        - $ref: '#/components/parameters/AvailabilityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAvailability'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [Availability]
+      summary: Delete availability
+      parameters:
+        - $ref: '#/components/parameters/AvailabilityIdParam'
+      responses:
+        '204':
+          description: Deleted
+
+  # -----------------------
+  # Equipment Requests
+  # -----------------------
+  /requests:
+    get:
+      tags: [Requests]
+      summary: List requests (filterable)
+      parameters:
+        - in: query
+          name: contractor_id
+          schema: { type: integer }
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: start_date
+          schema: { type: string, format: date }
+        - in: query
+          name: end_date
+          schema: { type: string, format: date }
+        - in: query
+          name: limit
+          schema: { type: integer }
+        - in: query
+          name: offset
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Request list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EquipmentRequest'
+    post:
+      tags: [Requests]
+      summary: Create equipment request (contractor)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EquipmentRequest'
+
+  /requests/{requestId}:
+    get:
+      tags: [Requests]
+      summary: Get request
+      parameters:
+        - $ref: '#/components/parameters/RequestIdParam'
+      responses:
+        '200':
+          description: Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EquipmentRequest'
+    put:
+      tags: [Requests]
+      summary: Update request
+      parameters:
+        - $ref: '#/components/parameters/RequestIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRequest'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [Requests]
+      summary: Cancel/Delete request
+      parameters:
+        - $ref: '#/components/parameters/RequestIdParam'
+      responses:
+        '204':
+          description: Deleted
+
+  /requests/{requestId}/bids:
+    get:
+      tags: [Bids]
+      summary: List bids for a request
+      parameters:
+        - $ref: '#/components/parameters/RequestIdParam'
+      responses:
+        '200':
+          description: Bids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+    post:
+      tags: [Bids]
+      summary: Submit a bid (supplier)
+      parameters:
+        - $ref: '#/components/parameters/RequestIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBid'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bid'
+
+  # -----------------------
+  # Bids
+  # -----------------------
+  /bids:
+    get:
+      tags: [Bids]
+      summary: List all bids (admin/filters)
+      parameters:
+        - in: query
+          name: supplier_id
+          schema: { type: integer }
+        - in: query
+          name: status
+          schema: { type: string }
+      responses:
+        '200':
+          description: Bids list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+    post:
+      tags: [Bids]
+      summary: Create standalone bid (rare)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBid'
+      responses:
+        '201':
+          description: Created
+
+  /bids/{bidId}:
+    get:
+      tags: [Bids]
+      summary: Get bid
+      parameters:
+        - $ref: '#/components/parameters/BidIdParam'
+      responses:
+        '200':
+          description: Bid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bid'
+    put:
+      tags: [Bids]
+      summary: Update bid
+      parameters:
+        - $ref: '#/components/parameters/BidIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBid'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Bids]
+      summary: Withdraw/Delete bid
+      parameters:
+        - $ref: '#/components/parameters/BidIdParam'
+      responses:
+        '204': { description: Deleted }
+
+  # Accepting a bid results in creation of a Rental resource.
+  /bids/{bidId}/accept:
+    post:
+      tags: [Bids, Rentals]
+      summary: Accept a bid — creates a rental (contractor action)
+      parameters:
+        - $ref: '#/components/parameters/BidIdParam'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rental_agreement_pdf: { type: string }
+                start_date: { type: string, format: date-time }
+                end_date: { type: string, format: date-time }
+      responses:
+        '201':
+          description: Rental created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+
+  # -----------------------
+  # Rentals
+  # -----------------------
+  /rentals:
+    get:
+      tags: [Rentals]
+      summary: List rentals (filterable)
+      parameters:
+        - in: query
+          name: contractor_id
+          schema: { type: integer }
+        - in: query
+          name: supplier_id
+          schema: { type: integer }
+        - in: query
+          name: status
+          schema: { type: string }
+      responses:
+        '200':
+          description: Rentals list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rental'
+    post:
+      tags: [Rentals]
+      summary: Create rental (direct)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRental'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+
+  /rentals/{rentalId}:
+    get:
+      tags: [Rentals]
+      summary: Get rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      responses:
+        '200':
+          description: Rental
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rental'
+    put:
+      tags: [Rentals]
+      summary: Update rental (dates / status)
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRental'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Rentals]
+      summary: Cancel rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      responses:
+        '204': { description: Deleted }
+
+  /rentals/{rentalId}/tracking:
+    get:
+      tags: [Tracking]
+      summary: Get rental tracking entries
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      responses:
+        '200':
+          description: Tracking list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RentalTracking'
+    post:
+      tags: [Tracking]
+      summary: Create tracking entry
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTracking'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalTracking'
+
+  /tracking/{trackingId}:
+    get:
+      tags: [Tracking]
+      summary: Get tracking by id
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Tracking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalTracking'
+    put:
+      tags: [Tracking]
+      summary: Update tracking
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTracking'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Tracking]
+      summary: Delete tracking
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: Deleted }
+
+  # -----------------------
+  # Payments
+  # -----------------------
+  /payments:
+    get:
+      tags: [Payments]
+      summary: List payments (admin)
+      parameters:
+        - in: query
+          name: rental_id
+          schema: { type: integer }
+        - in: query
+          name: contractor_id
+          schema: { type: integer }
+        - in: query
+          name: supplier_id
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Payments list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+    post:
+      tags: [Payments]
+      summary: Create payment (process)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPayment'
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+
+  /payments/{paymentId}:
+    get:
+      tags: [Payments]
+      summary: Get payment
+      parameters:
+        - $ref: '#/components/parameters/PaymentIdParam'
+      responses:
+        '200':
+          description: Payment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+    put:
+      tags: [Payments]
+      summary: Update payment (status)
+      parameters:
+        - $ref: '#/components/parameters/PaymentIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_status: { type: string }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Payments]
+      summary: Delete payment record
+      parameters:
+        - $ref: '#/components/parameters/PaymentIdParam'
+      responses:
+        '204': { description: Deleted }
+
+  /rentals/{rentalId}/payments:
+    get:
+      tags: [Payments]
+      summary: Get payments for rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      responses:
+        '200':
+          description: Payments list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+    post:
+      tags: [Payments]
+      summary: Make payment for rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPayment'
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+
+  # -----------------------
+  # Escrow
+  # -----------------------
+  /escrow:
+    get:
+      tags: [Escrow]
+      summary: List escrow records
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Escrow'
+    post:
+      tags: [Escrow]
+      summary: Create escrow hold
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEscrow'
+      responses:
+        '201':
+          description: Escrow created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Escrow'
+
+  /escrow/{escrowId}:
+    get:
+      tags: [Escrow]
+      summary: Get escrow
+      parameters:
+        - $ref: '#/components/parameters/EscrowIdParam'
+      responses:
+        '200':
+          description: Escrow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Escrow'
+    put:
+      tags: [Escrow]
+      summary: Update escrow
+      parameters:
+        - $ref: '#/components/parameters/EscrowIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Escrow]
+      summary: Delete escrow
+      parameters:
+        - $ref: '#/components/parameters/EscrowIdParam'
+      responses:
+        '204': { description: Deleted }
+
+  /rentals/{rentalId}/escrow:
+    get:
+      tags: [Escrow]
+      summary: Get escrow for rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      responses:
+        '200':
+          description: Escrow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Escrow'
+    post:
+      tags: [Escrow]
+      summary: Create escrow for rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEscrow'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Escrow'
+
+  # -----------------------
+  # Notifications
+  # -----------------------
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications (admin)
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+    post:
+      tags: [Notifications]
+      summary: Create notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewNotification'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+
+  /notifications/{notificationId}:
+    get:
+      tags: [Notifications]
+      summary: Get notification
+      parameters:
+        - $ref: '#/components/parameters/NotificationIdParam'
+      responses:
+        '200':
+          description: Notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+    put:
+      tags: [Notifications]
+      summary: Update notification (mark read)
+      parameters:
+        - $ref: '#/components/parameters/NotificationIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_read: { type: boolean }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Notifications]
+      summary: Delete notification
+      parameters:
+        - $ref: '#/components/parameters/NotificationIdParam'
+      responses:
+        '204': { description: Deleted }
+
+  /users/{id}/notifications:
+    get:
+      tags: [Notifications]
+      summary: Get notifications for user
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+  # -----------------------
+  # Disputes
+  # -----------------------
+  /disputes:
+    get:
+      tags: [Disputes]
+      summary: List disputes (admin)
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dispute'
+    post:
+      tags: [Disputes]
+      summary: Create dispute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewDispute'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+
+  /disputes/{disputeId}:
+    get:
+      tags: [Disputes]
+      summary: Get dispute
+      parameters:
+        - $ref: '#/components/parameters/DisputeIdParam'
+      responses:
+        '200':
+          description: Dispute
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+    put:
+      tags: [Disputes]
+      summary: Update dispute (resolve/reject)
+      parameters:
+        - $ref: '#/components/parameters/DisputeIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+                resolution_notes: { type: string }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Disputes]
+      summary: Delete dispute
+      parameters:
+        - $ref: '#/components/parameters/DisputeIdParam'
+      responses:
+        '204': { description: Deleted }
+
+  /rentals/{rentalId}/disputes:
+    get:
+      tags: [Disputes]
+      summary: Get disputes for rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      responses:
+        '200':
+          description: list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dispute'
+    post:
+      tags: [Disputes]
+      summary: Create dispute for rental
+      parameters:
+        - $ref: '#/components/parameters/RentalIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewDispute'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+
+# end paths
