@@ -26,7 +26,6 @@ tags:
   - name: Disputes
 components:
   schemas:
-
     # User and profile schemas
     User:
       type: object
@@ -71,7 +70,7 @@ components:
         access_token: { type: string }
         refresh_token: { type: string }
         user:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
 
     UserProfile:
       type: object
@@ -122,6 +121,14 @@ components:
         daily_rate: { type: number }
         status: { type: string, example: "available" }
         images: { type: string }
+
+    Post:
+      type: object
+      properties:
+        post_id: { type: integer }
+        constructor_id: { type: integer }
+        category: { type: string }
+        description: { type: string }
 
     NewItem:
       type: object
@@ -231,7 +238,8 @@ components:
 
     NewRental:
       type: object
-      required: [request_id, bid_id, contractor_id, supplier_id, start_date, end_date]
+      required:
+        [request_id, bid_id, contractor_id, supplier_id, start_date, end_date]
       properties:
         request_id: { type: integer }
         bid_id: { type: integer }
@@ -400,7 +408,6 @@ components:
         type: integer
 
 paths:
-
   # -----------------------
   # Auth
   # -----------------------
@@ -413,15 +420,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: "#/components/schemas/NewUser"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '400':
+                $ref: "#/components/schemas/User"
+        "400":
           description: Bad Request
 
   /auth/login:
@@ -439,13 +446,13 @@ paths:
                 email: { type: string }
                 password: { type: string }
       responses:
-        '200':
+        "200":
           description: Authenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '401':
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
           description: Unauthorized
 
   /auth/logout:
@@ -453,7 +460,7 @@ paths:
       tags: [Auth]
       summary: Logout user
       responses:
-        '200':
+        "200":
           description: Logged out
 
   /auth/token/refresh:
@@ -470,7 +477,7 @@ paths:
               properties:
                 refresh_token: { type: string }
       responses:
-        '200':
+        "200":
           description: Token refreshed
           content:
             application/json:
@@ -494,7 +501,7 @@ paths:
                 email: { type: string }
                 otp: { type: string }
       responses:
-        '200':
+        "200":
           description: Verified
 
   /auth/password/reset/request:
@@ -511,7 +518,7 @@ paths:
               properties:
                 email: { type: string }
       responses:
-        '200':
+        "200":
           description: Reset requested
 
   /auth/password/reset/confirm:
@@ -530,7 +537,7 @@ paths:
                 otp: { type: string }
                 new_password: { type: string }
       responses:
-        '200':
+        "200":
           description: Password reset
 
   # -----------------------
@@ -560,14 +567,14 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        "200":
           description: List of users
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: "#/components/schemas/User"
     post:
       tags: [Users]
       summary: Create user (admin)
@@ -576,35 +583,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: "#/components/schemas/NewUser"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
 
   /users/{id}:
     get:
       tags: [Users]
       summary: Get user by id
       parameters:
-        - $ref: '#/components/parameters/UserIdParam'
+        - $ref: "#/components/parameters/UserIdParam"
       responses:
-        '200':
+        "200":
           description: User object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
+                $ref: "#/components/schemas/User"
+        "404":
           description: Not found
     put:
       tags: [Users]
       summary: Update user
       parameters:
-        - $ref: '#/components/parameters/UserIdParam'
+        - $ref: "#/components/parameters/UserIdParam"
       requestBody:
         required: true
         content:
@@ -616,19 +623,19 @@ paths:
                 phone: { type: string }
                 status: { type: string }
       responses:
-        '200':
+        "200":
           description: Updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
     delete:
       tags: [Users]
       summary: Delete or deactivate user
       parameters:
-        - $ref: '#/components/parameters/UserIdParam'
+        - $ref: "#/components/parameters/UserIdParam"
       responses:
-        '204':
+        "204":
           description: Deleted
 
   # -----------------------
@@ -644,14 +651,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: profiles
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserProfile'
+                  $ref: "#/components/schemas/UserProfile"
     post:
       tags: [Profiles]
       summary: Create profile
@@ -660,14 +667,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserProfile'
+              $ref: "#/components/schemas/UserProfile"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfile'
+                $ref: "#/components/schemas/UserProfile"
 
   /profiles/{id}:
     get:
@@ -679,12 +686,12 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfile'
+                $ref: "#/components/schemas/UserProfile"
     put:
       tags: [Profiles]
       summary: Update profile
@@ -698,9 +705,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserProfile'
+              $ref: "#/components/schemas/UserProfile"
       responses:
-        '200':
+        "200":
           description: Updated
     delete:
       tags: [Profiles]
@@ -711,7 +718,7 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '204':
+        "204":
           description: Deleted
 
   /contractors/{id}:
@@ -724,12 +731,12 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Contractor profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContractorProfile'
+                $ref: "#/components/schemas/ContractorProfile"
 
   /suppliers/{id}:
     get:
@@ -741,12 +748,125 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Supplier profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupplierProfile'
+                $ref: "#/components/schemas/SupplierProfile"
+  /post:
+    post:
+      tags: [Post]
+      summary: Create a new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                requirements:
+                  type: string
+              required:
+                - userId
+                - title
+                - description
+      responses:
+        "201":
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierProfile"
+
+    get:
+      tags: [Post]
+      summary: Get all posts
+      responses:
+        "200":
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SupplierProfile"
+
+  /post/{postId}:
+    get:
+      tags: [Post]
+      summary: Get a specific post by ID
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierProfile"
+        "404":
+          description: Post not found
+
+    put:
+      tags: [Post]
+      summary: Update an existing post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                requirements:
+                  type: string
+              required:
+                - title
+                - description
+      responses:
+        "200":
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierProfile"
+        "404":
+          description: Post not found
+
+    delete:
+      tags: [Post]
+      summary: Delete a post by ID
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post deleted successfully
+        "404":
+          description: Post not found
 
   /admins/{id}:
     get:
@@ -758,12 +878,12 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Admin profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminProfile'
+                $ref: "#/components/schemas/AdminProfile"
 
   # -----------------------
   # Items
@@ -795,14 +915,14 @@ paths:
           name: offset
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Items list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: "#/components/schemas/Item"
     post:
       tags: [Items]
       summary: Create an item (supplier)
@@ -811,49 +931,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewItem'
+              $ref: "#/components/schemas/NewItem"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
+                $ref: "#/components/schemas/Item"
 
   /items/{itemId}:
     get:
       tags: [Items]
       summary: Get item by id
       parameters:
-        - $ref: '#/components/parameters/ItemIdParam'
+        - $ref: "#/components/parameters/ItemIdParam"
       responses:
-        '200':
+        "200":
           description: Item
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
+                $ref: "#/components/schemas/Item"
     put:
       tags: [Items]
       summary: Update item
       parameters:
-        - $ref: '#/components/parameters/ItemIdParam'
+        - $ref: "#/components/parameters/ItemIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewItem'
+              $ref: "#/components/schemas/NewItem"
       responses:
-        '200':
+        "200":
           description: Updated
     delete:
       tags: [Items]
       summary: Delete/Archive item
       parameters:
-        - $ref: '#/components/parameters/ItemIdParam'
+        - $ref: "#/components/parameters/ItemIdParam"
       responses:
-        '204':
+        "204":
           description: Deleted
 
   /suppliers/{supplierId}/items:
@@ -866,14 +986,14 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Supplier items
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: "#/components/schemas/Item"
 
   # -----------------------
   # Item Availability
@@ -883,69 +1003,69 @@ paths:
       tags: [Availability]
       summary: Get availability for item
       parameters:
-        - $ref: '#/components/parameters/ItemIdParam'
+        - $ref: "#/components/parameters/ItemIdParam"
       responses:
-        '200':
+        "200":
           description: Availability list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ItemAvailability'
+                  $ref: "#/components/schemas/ItemAvailability"
     post:
       tags: [Availability]
       summary: Add availability window for item
       parameters:
-        - $ref: '#/components/parameters/ItemIdParam'
+        - $ref: "#/components/parameters/ItemIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewAvailability'
+              $ref: "#/components/schemas/NewAvailability"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ItemAvailability'
+                $ref: "#/components/schemas/ItemAvailability"
 
   /availability/{availabilityId}:
     get:
       tags: [Availability]
       summary: Get availability by id
       parameters:
-        - $ref: '#/components/parameters/AvailabilityIdParam'
+        - $ref: "#/components/parameters/AvailabilityIdParam"
       responses:
-        '200':
+        "200":
           description: Availability
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ItemAvailability'
+                $ref: "#/components/schemas/ItemAvailability"
     put:
       tags: [Availability]
       summary: Update availability
       parameters:
-        - $ref: '#/components/parameters/AvailabilityIdParam'
+        - $ref: "#/components/parameters/AvailabilityIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewAvailability'
+              $ref: "#/components/schemas/NewAvailability"
       responses:
-        '200':
+        "200":
           description: Updated
     delete:
       tags: [Availability]
       summary: Delete availability
       parameters:
-        - $ref: '#/components/parameters/AvailabilityIdParam'
+        - $ref: "#/components/parameters/AvailabilityIdParam"
       responses:
-        '204':
+        "204":
           description: Deleted
 
   # -----------------------
@@ -975,14 +1095,14 @@ paths:
           name: offset
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Request list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EquipmentRequest'
+                  $ref: "#/components/schemas/EquipmentRequest"
     post:
       tags: [Requests]
       summary: Create equipment request (contractor)
@@ -991,49 +1111,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewRequest'
+              $ref: "#/components/schemas/NewRequest"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EquipmentRequest'
+                $ref: "#/components/schemas/EquipmentRequest"
 
   /requests/{requestId}:
     get:
       tags: [Requests]
       summary: Get request
       parameters:
-        - $ref: '#/components/parameters/RequestIdParam'
+        - $ref: "#/components/parameters/RequestIdParam"
       responses:
-        '200':
+        "200":
           description: Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EquipmentRequest'
+                $ref: "#/components/schemas/EquipmentRequest"
     put:
       tags: [Requests]
       summary: Update request
       parameters:
-        - $ref: '#/components/parameters/RequestIdParam'
+        - $ref: "#/components/parameters/RequestIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewRequest'
+              $ref: "#/components/schemas/NewRequest"
       responses:
-        '200':
+        "200":
           description: Updated
     delete:
       tags: [Requests]
       summary: Cancel/Delete request
       parameters:
-        - $ref: '#/components/parameters/RequestIdParam'
+        - $ref: "#/components/parameters/RequestIdParam"
       responses:
-        '204':
+        "204":
           description: Deleted
 
   /requests/{requestId}/bids:
@@ -1041,34 +1161,34 @@ paths:
       tags: [Bids]
       summary: List bids for a request
       parameters:
-        - $ref: '#/components/parameters/RequestIdParam'
+        - $ref: "#/components/parameters/RequestIdParam"
       responses:
-        '200':
+        "200":
           description: Bids
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Bid'
+                  $ref: "#/components/schemas/Bid"
     post:
       tags: [Bids]
       summary: Submit a bid (supplier)
       parameters:
-        - $ref: '#/components/parameters/RequestIdParam'
+        - $ref: "#/components/parameters/RequestIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewBid'
+              $ref: "#/components/schemas/NewBid"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bid'
+                $ref: "#/components/schemas/Bid"
 
   # -----------------------
   # Bids
@@ -1085,14 +1205,14 @@ paths:
           name: status
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: Bids list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Bid'
+                  $ref: "#/components/schemas/Bid"
     post:
       tags: [Bids]
       summary: Create standalone bid (rare)
@@ -1101,9 +1221,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewBid'
+              $ref: "#/components/schemas/NewBid"
       responses:
-        '201':
+        "201":
           description: Created
 
   /bids/{bidId}:
@@ -1111,34 +1231,34 @@ paths:
       tags: [Bids]
       summary: Get bid
       parameters:
-        - $ref: '#/components/parameters/BidIdParam'
+        - $ref: "#/components/parameters/BidIdParam"
       responses:
-        '200':
+        "200":
           description: Bid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bid'
+                $ref: "#/components/schemas/Bid"
     put:
       tags: [Bids]
       summary: Update bid
       parameters:
-        - $ref: '#/components/parameters/BidIdParam'
+        - $ref: "#/components/parameters/BidIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewBid'
+              $ref: "#/components/schemas/NewBid"
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Bids]
       summary: Withdraw/Delete bid
       parameters:
-        - $ref: '#/components/parameters/BidIdParam'
+        - $ref: "#/components/parameters/BidIdParam"
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   # Accepting a bid results in creation of a Rental resource.
   /bids/{bidId}/accept:
@@ -1146,7 +1266,7 @@ paths:
       tags: [Bids, Rentals]
       summary: Accept a bid — creates a rental (contractor action)
       parameters:
-        - $ref: '#/components/parameters/BidIdParam'
+        - $ref: "#/components/parameters/BidIdParam"
       requestBody:
         required: false
         content:
@@ -1158,12 +1278,12 @@ paths:
                 start_date: { type: string, format: date-time }
                 end_date: { type: string, format: date-time }
       responses:
-        '201':
+        "201":
           description: Rental created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Rental'
+                $ref: "#/components/schemas/Rental"
 
   # -----------------------
   # Rentals
@@ -1183,14 +1303,14 @@ paths:
           name: status
           schema: { type: string }
       responses:
-        '200':
+        "200":
           description: Rentals list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Rental'
+                  $ref: "#/components/schemas/Rental"
     post:
       tags: [Rentals]
       summary: Create rental (direct)
@@ -1199,82 +1319,82 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewRental'
+              $ref: "#/components/schemas/NewRental"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Rental'
+                $ref: "#/components/schemas/Rental"
 
   /rentals/{rentalId}:
     get:
       tags: [Rentals]
       summary: Get rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       responses:
-        '200':
+        "200":
           description: Rental
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Rental'
+                $ref: "#/components/schemas/Rental"
     put:
       tags: [Rentals]
       summary: Update rental (dates / status)
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewRental'
+              $ref: "#/components/schemas/NewRental"
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Rentals]
       summary: Cancel rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   /rentals/{rentalId}/tracking:
     get:
       tags: [Tracking]
       summary: Get rental tracking entries
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       responses:
-        '200':
+        "200":
           description: Tracking list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RentalTracking'
+                  $ref: "#/components/schemas/RentalTracking"
     post:
       tags: [Tracking]
       summary: Create tracking entry
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTracking'
+              $ref: "#/components/schemas/NewTracking"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RentalTracking'
+                $ref: "#/components/schemas/RentalTracking"
 
   /tracking/{trackingId}:
     get:
@@ -1286,12 +1406,12 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Tracking
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RentalTracking'
+                $ref: "#/components/schemas/RentalTracking"
     put:
       tags: [Tracking]
       summary: Update tracking
@@ -1305,9 +1425,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTracking'
+              $ref: "#/components/schemas/NewTracking"
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Tracking]
       summary: Delete tracking
@@ -1317,7 +1437,7 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   # -----------------------
   # Payments
@@ -1337,14 +1457,14 @@ paths:
           name: supplier_id
           schema: { type: integer }
       responses:
-        '200':
+        "200":
           description: Payments list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Payment'
+                  $ref: "#/components/schemas/Payment"
     post:
       tags: [Payments]
       summary: Create payment (process)
@@ -1353,33 +1473,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewPayment'
+              $ref: "#/components/schemas/NewPayment"
       responses:
-        '201':
+        "201":
           description: Payment created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
+                $ref: "#/components/schemas/Payment"
 
   /payments/{paymentId}:
     get:
       tags: [Payments]
       summary: Get payment
       parameters:
-        - $ref: '#/components/parameters/PaymentIdParam'
+        - $ref: "#/components/parameters/PaymentIdParam"
       responses:
-        '200':
+        "200":
           description: Payment
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
+                $ref: "#/components/schemas/Payment"
     put:
       tags: [Payments]
       summary: Update payment (status)
       parameters:
-        - $ref: '#/components/parameters/PaymentIdParam'
+        - $ref: "#/components/parameters/PaymentIdParam"
       requestBody:
         required: true
         content:
@@ -1389,48 +1509,48 @@ paths:
               properties:
                 payment_status: { type: string }
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Payments]
       summary: Delete payment record
       parameters:
-        - $ref: '#/components/parameters/PaymentIdParam'
+        - $ref: "#/components/parameters/PaymentIdParam"
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   /rentals/{rentalId}/payments:
     get:
       tags: [Payments]
       summary: Get payments for rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       responses:
-        '200':
+        "200":
           description: Payments list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Payment'
+                  $ref: "#/components/schemas/Payment"
     post:
       tags: [Payments]
       summary: Make payment for rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewPayment'
+              $ref: "#/components/schemas/NewPayment"
       responses:
-        '201':
+        "201":
           description: Payment created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
+                $ref: "#/components/schemas/Payment"
 
   # -----------------------
   # Escrow
@@ -1440,14 +1560,14 @@ paths:
       tags: [Escrow]
       summary: List escrow records
       responses:
-        '200':
+        "200":
           description: List
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Escrow'
+                  $ref: "#/components/schemas/Escrow"
     post:
       tags: [Escrow]
       summary: Create escrow hold
@@ -1456,33 +1576,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewEscrow'
+              $ref: "#/components/schemas/NewEscrow"
       responses:
-        '201':
+        "201":
           description: Escrow created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Escrow'
+                $ref: "#/components/schemas/Escrow"
 
   /escrow/{escrowId}:
     get:
       tags: [Escrow]
       summary: Get escrow
       parameters:
-        - $ref: '#/components/parameters/EscrowIdParam'
+        - $ref: "#/components/parameters/EscrowIdParam"
       responses:
-        '200':
+        "200":
           description: Escrow
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Escrow'
+                $ref: "#/components/schemas/Escrow"
     put:
       tags: [Escrow]
       summary: Update escrow
       parameters:
-        - $ref: '#/components/parameters/EscrowIdParam'
+        - $ref: "#/components/parameters/EscrowIdParam"
       requestBody:
         required: true
         content:
@@ -1492,46 +1612,46 @@ paths:
               properties:
                 status: { type: string }
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Escrow]
       summary: Delete escrow
       parameters:
-        - $ref: '#/components/parameters/EscrowIdParam'
+        - $ref: "#/components/parameters/EscrowIdParam"
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   /rentals/{rentalId}/escrow:
     get:
       tags: [Escrow]
       summary: Get escrow for rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       responses:
-        '200':
+        "200":
           description: Escrow
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Escrow'
+                $ref: "#/components/schemas/Escrow"
     post:
       tags: [Escrow]
       summary: Create escrow for rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewEscrow'
+              $ref: "#/components/schemas/NewEscrow"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Escrow'
+                $ref: "#/components/schemas/Escrow"
 
   # -----------------------
   # Notifications
@@ -1541,14 +1661,14 @@ paths:
       tags: [Notifications]
       summary: List notifications (admin)
       responses:
-        '200':
+        "200":
           description: List
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Notification'
+                  $ref: "#/components/schemas/Notification"
     post:
       tags: [Notifications]
       summary: Create notification
@@ -1557,33 +1677,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewNotification'
+              $ref: "#/components/schemas/NewNotification"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: "#/components/schemas/Notification"
 
   /notifications/{notificationId}:
     get:
       tags: [Notifications]
       summary: Get notification
       parameters:
-        - $ref: '#/components/parameters/NotificationIdParam'
+        - $ref: "#/components/parameters/NotificationIdParam"
       responses:
-        '200':
+        "200":
           description: Notification
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Notification'
+                $ref: "#/components/schemas/Notification"
     put:
       tags: [Notifications]
       summary: Update notification (mark read)
       parameters:
-        - $ref: '#/components/parameters/NotificationIdParam'
+        - $ref: "#/components/parameters/NotificationIdParam"
       requestBody:
         required: true
         content:
@@ -1593,30 +1713,30 @@ paths:
               properties:
                 is_read: { type: boolean }
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Notifications]
       summary: Delete notification
       parameters:
-        - $ref: '#/components/parameters/NotificationIdParam'
+        - $ref: "#/components/parameters/NotificationIdParam"
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   /users/{id}/notifications:
     get:
       tags: [Notifications]
       summary: Get notifications for user
       parameters:
-        - $ref: '#/components/parameters/UserIdParam'
+        - $ref: "#/components/parameters/UserIdParam"
       responses:
-        '200':
+        "200":
           description: List
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Notification'
+                  $ref: "#/components/schemas/Notification"
 
   # -----------------------
   # Disputes
@@ -1626,14 +1746,14 @@ paths:
       tags: [Disputes]
       summary: List disputes (admin)
       responses:
-        '200':
+        "200":
           description: List
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Dispute'
+                  $ref: "#/components/schemas/Dispute"
     post:
       tags: [Disputes]
       summary: Create dispute
@@ -1642,33 +1762,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewDispute'
+              $ref: "#/components/schemas/NewDispute"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Dispute'
+                $ref: "#/components/schemas/Dispute"
 
   /disputes/{disputeId}:
     get:
       tags: [Disputes]
       summary: Get dispute
       parameters:
-        - $ref: '#/components/parameters/DisputeIdParam'
+        - $ref: "#/components/parameters/DisputeIdParam"
       responses:
-        '200':
+        "200":
           description: Dispute
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Dispute'
+                $ref: "#/components/schemas/Dispute"
     put:
       tags: [Disputes]
       summary: Update dispute (resolve/reject)
       parameters:
-        - $ref: '#/components/parameters/DisputeIdParam'
+        - $ref: "#/components/parameters/DisputeIdParam"
       requestBody:
         required: true
         content:
@@ -1679,47 +1799,46 @@ paths:
                 status: { type: string }
                 resolution_notes: { type: string }
       responses:
-        '200': { description: Updated }
+        "200": { description: Updated }
     delete:
       tags: [Disputes]
       summary: Delete dispute
       parameters:
-        - $ref: '#/components/parameters/DisputeIdParam'
+        - $ref: "#/components/parameters/DisputeIdParam"
       responses:
-        '204': { description: Deleted }
+        "204": { description: Deleted }
 
   /rentals/{rentalId}/disputes:
     get:
       tags: [Disputes]
       summary: Get disputes for rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       responses:
-        '200':
+        "200":
           description: list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Dispute'
+                  $ref: "#/components/schemas/Dispute"
     post:
       tags: [Disputes]
       summary: Create dispute for rental
       parameters:
-        - $ref: '#/components/parameters/RentalIdParam'
+        - $ref: "#/components/parameters/RentalIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewDispute'
+              $ref: "#/components/schemas/NewDispute"
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Dispute'
-
+                $ref: "#/components/schemas/Dispute"
 # end paths
