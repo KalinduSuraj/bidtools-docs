@@ -35,4 +35,4 @@ jobs:
           swaggerhub api:unpublish MCHANUKA72/final/1.0.0 || true
 
           # 2. Update the definition with your new file
-          swaggerhub api:update MCHANUKA72/CICDTest/1 --file swagger.yml --visibility public --published=publish
+          swaggerhub api:update MCHANUKA72/final/1.0.0 --file Docs/swagger.yml --visibility public --published=publish
