@@ -4,7 +4,7 @@ name: Update SwaggerHub Docs
 on:
   push:
     branches:
-      - deployment
+      - main
     paths:
       - 'Docs/swagger.yml' # Change this if your file is in a folder like 'docs/swagger.yml'
 

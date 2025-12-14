@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: --- |Smart Construction Equipment Rental & Bidding System API| ---
+  title: Smart Construction Equipment Rental & Bidding System API
   version: "1.0.0"
   description: RESTful API for Contractors, Suppliers, Admins — Rentals, Bids, Payments, Notifications, Disputes
 servers:
