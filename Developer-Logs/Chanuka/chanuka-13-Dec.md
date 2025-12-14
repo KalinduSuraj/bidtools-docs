@@ -5,6 +5,7 @@
 ## ✔ Tasks Completed Today
 - Find and Install necessary libraries into the projects
 - Config AWS
+- Developed CICD pipeline for Docs
 
 ## 🔧 Work In Progress
 - Developing Notification feature in bid backend-core
