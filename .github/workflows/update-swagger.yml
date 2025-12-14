@@ -1,0 +1,38 @@
+name: Update SwaggerHub Docs
+
+# Trigger this workflow only when swagger.yml changes on the main branch
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Docs/swagger.yml' # Change this if your file is in a folder like 'docs/swagger.yml'
+
+jobs:
+  publish-to-swaggerhub:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out your code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 3. Install SwaggerHub CLI
+      - name: Install SwaggerHub CLI
+        run: npm i -g swaggerhub-cli
+
+      - name: Publish to SwaggerHub
+        env:
+          SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+        run: |
+          # 1. Force Unpublish (Unlock) the version so it can be overwritten
+          # We add "|| true" so the pipeline doesn't fail if it's already unpublished.
+          swaggerhub api:unpublish MCHANUKA72/final/1.0.0 || true
+
+          # 2. Update the definition with your new file
+          swaggerhub api:update MCHANUKA72/final/1.0.0 --file Docs/swagger.yml --visibility public --published=publish
