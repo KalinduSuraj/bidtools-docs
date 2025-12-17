@@ -1517,7 +1517,7 @@ paths:
       responses:
         "204": { description: Deleted }
 
-  /rentals/{rentalId}/payments:
+  /payments/rentalId/{rentalId}:
     get:
       tags: [Payments]
       summary: Get payments for rental
