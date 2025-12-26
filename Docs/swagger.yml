@@ -1260,7 +1260,7 @@ paths:
         "204": { description: Deleted }
 
   # Accepting a bid results in creation of a Rental resource.
-  /bids/{bidId}/accept:
+  /rentals/accept/{bidId}:
     post:
       tags: [Bids, Rentals]
       summary: Accept a bid — creates a rental (contractor action)
